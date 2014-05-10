@@ -1,0 +1,11 @@
+---
+- name: update yum packages
+  shell: yum update -y
+  sudo: yes
+- name: install common packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items: packages
+  sudo: yes
+

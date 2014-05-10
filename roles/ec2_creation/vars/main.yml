@@ -1,0 +1,31 @@
+---
+default_values:
+  instance_type: "m1.large"
+  region: "eu-west-1"
+  zone: "eu-west-1b"
+  key_pair: "Apps"
+  image_id: "ami-f011e187" #Amazon Linux 64 bits blank slate
+  security_groups: ["App Frontends", "App Private"]
+
+instances:
+  production:
+    example.com:
+      elastic_ip: "54.247.104.88"
+      name: "example.com"
+ 
+  staging:
+    example.com:
+      elastic_ip: "54.247.89.191"
+      name: "stag-example.com"
+      instance_type: "m1.small"
+
+instance_values:
+  name: "{{ instances[rails_env][site]['name'] | default(default_values['name']) }}"
+  instance_type: "{{ instances[rails_env][site]['instance_type'] | default(default_values['instance_type']) }}"
+  region: "{{ instances[rails_env][site]['region'] | default(default_values['region']) }}"
+  zone: "{{ instances[rails_env][site]['zone'] | default(default_values['zone']) }}"
+  key_pair: "{{ instances[rails_env][site]['key_pair'] | default(default_values['key_pair']) }}"
+  image_id: "{{ instances[rails_env][site]['image_id'] | default(default_values['image_id']) }}"
+  elastic_ip: "{{ instances[rails_env][site]['elastic_ip'] | default(default_values['elastic_ip']) }}"
+  security_groups: "{{ instances[rails_env][site]['security_groups'] | default(default_values['security_groups']) }}"
+

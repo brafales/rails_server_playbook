@@ -1,0 +1,11 @@
+---
+- name: sudoers // copy cloud-init file for ec2-user
+  copy:
+    src: cloud-init
+    dest: /etc/sudoers.d/cloud-init
+    owner: root
+    group: root
+    mode: 0440
+  remote_user: ec2-user
+  sudo: yes
+

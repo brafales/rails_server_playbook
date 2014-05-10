@@ -1,0 +1,19 @@
+---
+- name: bash // create plugins folder
+  file:
+    path: /home/rails/.bashrc.d
+    state: directory
+    mode: 0755
+
+- name: bash // copy bashrc file
+  copy:
+    src: bashrc
+    dest: /home/rails/.bashrc
+    mode: 0644
+
+- name: bash // copy rails_env file
+  template:
+    src: rails_env.sh.j2
+    dest: /home/rails/.bashrc.d/rails_env.sh
+    mode: 0644
+

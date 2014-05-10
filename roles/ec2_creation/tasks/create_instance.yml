@@ -1,0 +1,38 @@
+---
+- name: Get instance information
+  debug:
+    msg: "{{ instance_values }}"
+
+- name: Create instance
+  ec2:
+    region: "{{ instance_values['region'] }}"
+    zone: "{{ instance_values['zone'] }}"
+    keypair: "{{ instance_values['key_pair'] }}"
+    group: "{{ instance_values['security_groups'] }}"
+    instance_type: "{{ instance_values['instance_type'] }}"
+    image: "{{ instance_values['image_id'] }}"
+    count: 1
+    wait: yes
+    instance_tags:
+      Name: "{{ instance_values['name'] }}"
+  when: ec2_instances.instances[instance_values['name']]|default("") == ""
+  register: ec2_info
+
+- name: Wait for instances to listen on port 22
+  wait_for:
+    state: started
+    host: "{{ ec2_info.instances[0].public_dns_name }}"
+    port: 22
+  when: ec2_info|changed
+
+- name: Add new instance to ec2hosts group
+  add_host:
+    hostname: "{{ ec2_info.instances[0].public_ip }}"
+    groupname: ec2hosts
+    instance_id: "{{ ec2_info.instances[0].id }}"
+  when: ec2_info|changed
+
+- name: Get ec2_info information
+  debug:
+    msg: "{{ ec2_info }}"
+

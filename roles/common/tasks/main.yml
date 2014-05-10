@@ -1,0 +1,9 @@
+---
+# Main tasks for all hosts
+- include: hostname.yml
+- include: sudoers.yml
+- include: rails_user.yml
+- include: packages.yml
+- include: apache.yml
+- include: rbenv.yml
+

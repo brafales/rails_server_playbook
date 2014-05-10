@@ -1,0 +1,16 @@
+---
+- name: get passenger snippet
+  shell: passenger-install-apache2-module --snippet
+  register: passenger_snippet
+  tags: passenger
+
+- name: setup snippet
+  shell: echo "{{ passenger_snippet.stdout }}" > /etc/httpd/conf.modules.d/02-passenger.conf
+  sudo: yes
+  tags: passenger
+
+- name: setup passenger options
+  copy: src=passenger-options.conf dest=/etc/httpd/conf.modules.d/02-passenger-options.conf owner=root group=root mode=0644
+  sudo: yes
+  tags: passenger
+

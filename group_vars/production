@@ -1,0 +1,4 @@
+---
+rails_env: production
+site_root_folder: prod
+

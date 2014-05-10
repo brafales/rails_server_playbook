@@ -1,0 +1,7 @@
+---
+- name: Setup hostname
+  hostname:
+    name: "{{ rails_env }}.{{ site }}"
+  remote_user: ec2-user
+  sudo: yes
+

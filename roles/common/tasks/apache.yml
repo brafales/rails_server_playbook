@@ -1,0 +1,7 @@
+---
+- name: Copy apache config file
+  copy:
+    src: apache_custom.conf
+    dest: /etc/httpd/conf.d/
+    mode: 0644
+  sudo: yes

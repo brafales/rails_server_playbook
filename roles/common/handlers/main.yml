@@ -1,0 +1,4 @@
+---
+- name: rbenv rehash
+  shell: rbenv rehash
+

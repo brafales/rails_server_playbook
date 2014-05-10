@@ -1,0 +1,3 @@
+ec2-user ALL=(ALL) NOPASSWD: ALL
+rails ALL=(ALL) NOPASSWD: ALL
+

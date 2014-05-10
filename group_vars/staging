@@ -1,0 +1,4 @@
+---
+rails_env: staging
+site_root_folder: stag
+

@@ -1,0 +1,16 @@
+---
+packages:
+  - git
+  - curl-devel
+  - httpd24
+  - httpd24-devel
+  - apr-devel
+  - apr-util-devel
+  - gcc47
+  - gcc47-c++
+  - openssl
+  - openssl-devel
+rbenv_root: /home/rails/.rbenv
+ruby_version: 2.1.1
+passenger_version: 4.0.41
+

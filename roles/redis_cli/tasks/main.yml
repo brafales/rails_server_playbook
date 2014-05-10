@@ -1,0 +1,22 @@
+---
+- name: create temp folder
+  file:
+    path: "{{ download_folder }}"
+    state: directory
+
+- name: download redis
+  get_url:
+    dest: "{{ download_folder }}"
+    url: "{{ url }}"
+    sha256sum: "{{ sha }}"
+
+- name: uncompress redis
+  action: command /bin/tar xvzf {{ file }}.tar.gz chdir={{ download_folder }} creates={{ download_folder}}/{{ file }}
+
+- name: build redis
+  action: command make chdir={{ download_folder }}/{{ file }}
+
+- name: install redis_cli
+  action: command make install chdir={{ download_folder }}/{{ file }}
+  sudo: yes
+

@@ -1,0 +1,28 @@
+---
+#Create the instance
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - ec2_creation
+
+#Configure and install all we need
+- hosts: ec2hosts
+  gather_facts: false
+  remote_user: rails
+  roles:
+    - common
+    - passenger
+
+#Associate elastic ip
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - include_vars: roles/ec2_creation/vars/main.yml
+    - name: associate elastic ip to instance
+      ec2_eip:
+        instance_id: "{{ ec2_info['instance_ids'][0] }}"
+        ip: "{{ instance_values['elastic_ip'] }}"
+        region: "{{ instance_values['region'] }}"
+

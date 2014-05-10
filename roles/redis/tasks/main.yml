@@ -1,0 +1,55 @@
+---
+- name: create temp folder
+  file:
+    path: "{{ download_folder }}"
+    state: directory
+
+- name: download redis
+  get_url:
+    dest: "{{ download_folder }}"
+    url: "{{ url }}"
+    sha256sum: "{{ sha }}"
+
+- name: uncompress redis
+  action: command /bin/tar xvzf {{ file }}.tar.gz chdir={{ download_folder }} creates={{ download_folder}}/{{ file }}
+
+- name: build redis (make)
+  action: command make chdir={{ download_folder }}/{{ file }}
+
+- name: install redis executables (make install)
+  action: command make install chdir={{ download_folder }}/{{ file }}
+  sudo: yes
+
+- name: create system folders for redis
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - /etc/redis
+    - /var/lib/redis
+  sudo: yes
+
+- name: tune and copy config file
+  action: shell sed -e "s/^daemonize no$/daemonize yes/" -e "s/^dir \.\//dir \/var\/lib\/redis\//" -e "s/^loglevel debug$/loglevel notice/" -e "s/^logfile stdout$/logfile \/var\/log\/redis.log/" redis.conf > /etc/redis/redis.conf chdir={{ download_folder }}/{{ file }}
+  sudo: yes
+
+- name: copy sysinit config file
+  copy:
+    src: init_script
+    dest: /etc/init.d/redis-server
+    owner: root
+    group: root
+    mode: 0755
+  sudo: yes
+
+- name: enable redis as a sysinit script
+  action: command /sbin/chkconfig --add redis-server
+  sudo: yes
+
+- name: enable redis startup at boot and start it
+  service:
+    name: redis-server
+    enabled: true
+    state: started
+  sudo: yes
+

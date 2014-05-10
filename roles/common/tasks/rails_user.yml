@@ -1,0 +1,43 @@
+---
+- name: rails_user // create the user
+  user:
+    name: rails
+    state: present
+  remote_user: ec2-user
+  sudo: yes
+
+- name: rails_user // clean authorized keys
+  shell: "(test -f /home/rails/.ssh/authorized_keys && echo -n \"\" > /home/rails/.ssh/authorized_keys) || true"
+  remote_user: ec2-user
+  sudo: yes
+  tags: ssh_keys
+
+- name: rails_user // set up authorized_keys
+  authorized_key:
+    user: rails
+    key: "{{ item }}"
+  with_file:
+    - ssh_keys/brafales
+  remote_user: ec2-user
+  sudo: yes
+  tags: ssh_keys
+
+- name: copy ssh keys
+  #local_action: command scp -rp3 user@securehost.com:./ami_files/ssh/* rails@{{ hostvars.localhost.ec2_info.instances[0].public_ip }}:./.ssh/
+  local_action: command scp -rp3 rails@glados.arenaflowers.net:./ami_files/ssh/* rails@{{ hostvars.localhost.ec2_info.instances[0].public_ip }}:./.ssh/
+  sudo: no
+  tags: ssh_keys
+
+- name: ensure correct ssh file permissions
+  file: path=/home/rails/.ssh/{{ item }} owner=rails group=rails mode=0600
+  with_items:
+    - id_rsa
+    - id_rsa.pub
+  tags: ssh_keys
+
+- name: ssh config
+  copy: src=ssh_config dest=/home/rails/.ssh/config owner=rails group=rails mode=0644
+  tags: ssh_keys
+
+- include: bash.yml
+

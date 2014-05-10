@@ -1,0 +1,6 @@
+---
+url: "http://download.redis.io/releases/redis-2.8.8.tar.gz"
+sha: "fd2be11b8d9300d35b6bbed6fcd6fa6d7ef1a72ccaeb0cc991ce44dc49908bc8"
+file: "redis-2.8.8"
+download_folder: "/home/rails/install/redis"
+

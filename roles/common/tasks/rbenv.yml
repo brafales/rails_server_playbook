@@ -1,0 +1,44 @@
+---
+- name: rbenv // copy rbenv bash plugin
+  template:
+    src: rbenv.sh.j2
+    dest: /home/rails/.bashrc.d/rbenv.sh
+    mode: 0644
+  tags: rbenv
+
+- name: rbenv // clone repo
+  git:
+    repo: git://github.com/sstephenson/rbenv.git
+    dest: "{{ rbenv_root }}"
+  tags: rbenv
+
+- name: rbenv // clone ruby-build
+  git:
+    repo: git://github.com/sstephenson/ruby-build.git
+    dest: "{{ rbenv_root }}/plugins/ruby-build"
+  tags: rbenv
+
+- name: rbenv // check ruby installed
+  shell: "rbenv versions | grep {{ ruby_version }}"
+  register: ruby_installed
+  ignore_errors: yes
+  tags: rbenv
+
+- name: rbenv // install ruby
+  shell: rbenv install "{{ ruby_version }}"
+  when: ruby_installed|failed
+  notify: rbenv rehash
+  tags: rbenv
+
+- name: rbenv // set global ruby
+  shell: rbenv global "{{ ruby_version }}"
+  tags: rbenv
+
+- name: rbenv // update rubygems
+  shell: gem update --system
+  tags: rbenv
+
+- name: rbenv // install bundler
+  shell: gem install bundler
+  tags: rbenv
+
